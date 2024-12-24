@@ -1,6 +1,5 @@
-from app import create_app  # وارد کردن تابع ساخت برنامه
+from app import create_app
 
-app = create_app()  # ایجاد برنامه با تنظیمات پیش‌فرض
-
+app = create_app()  
 if __name__ == '__main__':
-    app.run(debug=True)  # اجرای برنامه در حالت اشکال‌زدایی
+    app.run(debug=True)  

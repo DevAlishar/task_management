@@ -1,30 +1,29 @@
-from flask import Flask  # وارد کردن کلاس Flask برای ساخت برنامه وب
-from flask_sqlalchemy import SQLAlchemy  # برای تعامل با پایگاه داده
-from flask_migrate import Migrate  # برای مدیریت مهاجرت پایگاه داده
-
-# ایجاد نمونه‌هایی از افزونه‌های Flask
-db = SQLAlchemy()  # نمونه‌ای از SQLAlchemy برای مدیریت مدل‌های پایگاه داده
-migrate = Migrate()  # نمونه‌ای از Migrate برای مدیریت مهاجرت‌های پایگاه داده
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from app.api.tasks import task_bp
+import app
+app.register_blueprint(task_bp, url_prefix='/api/v1/tasks')
+db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app():
-    """
-    تابعی برای ایجاد و پیکربندی برنامه Flask.
-    """
-    app = Flask(__name__)  # ساخت نمونه برنامه Flask
+    app = Flask(__name__)
 
-    # تنظیمات برنامه
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'  # آدرس پایگاه داده SQLite
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # غیرفعال کردن ویژگی‌های غیرضروری
-    app.config['SECRET_KEY'] = 'your_secret_key'  # کلید رمزنگاری برای JWT
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'your_secret_key'
 
-    # اتصال افزونه‌ها به برنامه
-    db.init_app(app)  # اتصال پایگاه داده به برنامه
-    migrate.init_app(app, db)  # اتصال مهاجرت پایگاه داده به برنامه
+    db.init_app(app)
+    migrate.init_app(app, db)
 
-    # ثبت بلوپرینت‌های مسیرهای REST API
     from app.api.users import user_bp
-    from app.api.tasks import task_bp
-    app.register_blueprint(user_bp, url_prefix='/api/v1/users')  # مسیرهای مدیریت کاربران
-    app.register_blueprint(task_bp, url_prefix='/api/v1/tasks')  # مسیرهای مدیریت وظایف
+    from app.api.tasks import task_bp  #طمینان حاصل کنید که این خط وجود دارد
+    app.register_blueprint(user_bp, url_prefix='/api/v1/users')
+    app.register_blueprint(task_bp, url_prefix='/api/v1/tasks')
 
-    return app  # بازگشت نمونه برنامه
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    return app

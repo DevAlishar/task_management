@@ -1,6 +1,6 @@
-from app import db  # پایگاه داده
+from app import db
 
-class Task(db.Model):  # تعریف مدل وظیفه
+class Task(db.Model): 
     """
     مدل مربوط به وظایف کاربران.
     """

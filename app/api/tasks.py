@@ -1,26 +1,22 @@
-from flask import Blueprint, request, jsonify  # برای مدیریت مسیرها و درخواست‌ها
-from app.models.task import Task  # مدل وظیفه
+from flask import Blueprint, request, jsonify
+from app.models.task import Task  # اطمینان حاصل کنید که مدل Task به درستی وارد شده است
 from app import db  # پایگاه داده
 
-task_bp = Blueprint('tasks', __name__)  # تعریف بلوپرینت برای مسیرهای مدیریت وظایف
+# تعریف بلوپرینت
+task_bp = Blueprint('tasks', __name__)
 
-@task_bp.route('/', methods=['POST'])
+@task_bp.route('/', methods=['POST'])  # فقط متد POST مجاز است
 def create_task():
-    """
-    مسیر برای ایجاد وظیفه جدید.
-    """
-    data = request.get_json()  # دریافت داده‌های JSON از درخواست
-    user_id = data.get('user_id')  # شناسه کاربر
-    title = data.get('title')  # عنوان وظیفه
-    description = data.get('description')  # توضیحات وظیفه
-    due_date = data.get('due_date')  # تاریخ مهلت وظیفه
-    priority = data.get('priority', 'low')  # اولویت وظیفه (پیش‌فرض: کم)
+    data = request.get_json()
+    user_id = data.get('user_id')
+    title = data.get('title')
+    description = data.get('description')
+    due_date = data.get('due_date')
+    priority = data.get('priority', 'low')
 
-    # بررسی اطلاعات اجباری
     if not user_id or not title or not due_date:
         return jsonify({'message': 'اطلاعات اجباری وارد نشده است'}), 400
 
-    # ایجاد وظیفه جدید
     task = Task(
         user_id=user_id,
         title=title,
@@ -28,7 +24,7 @@ def create_task():
         due_date=due_date,
         priority=priority,
     )
-    db.session.add(task)  # افزودن وظیفه به پایگاه داده
-    db.session.commit()  # ذخیره تغییرات در پایگاه داده
+    db.session.add(task)
+    db.session.commit()
 
     return jsonify({'message': 'وظیفه با موفقیت ایجاد شد'}), 201
